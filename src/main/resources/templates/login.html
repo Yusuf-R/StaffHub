@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StaffHub · Sign In</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/css/staffhub.css}" href="css/staffhub.css">
+</head>
+<body>
+
+<div class="auth-shell">
+
+    <!-- Dark panel: brand + ID badge illustration -->
+    <div class="auth-panel-dark">
+        <div class="auth-brand">
+            <span class="badge-chip badge-chip--sm">SH</span>
+            StaffHub
+        </div>
+
+        <div class="lede">
+            <p class="eyebrow">Directory access</p>
+            <h2>Every person on the roster, one clean sign-in away.</h2>
+            <p>StaffHub keeps your directory, departments, and staff status in one place. Built for the people who run the front desk, not just the org chart.</p>
+        </div>
+
+        <!-- signature element: the ID card -->
+        <div class="id-card">
+            <div class="id-photo"></div>
+            <div class="id-name">Mariam Emiabata</div>
+            <div class="id-role">Operations · Active</div>
+            <div class="id-number mono">ID · ME-00842</div>
+        </div>
+    </div>
+
+    <!-- Light panel: sign-in form -->
+    <div class="auth-panel-light">
+        <div class="auth-form-wrap">
+            <p class="eyebrow">Staff access</p>
+            <h1>Welcome back</h1>
+            <p class="subtitle">Sign in to manage your staff directory.</p>
+
+            <!-- Login Error Display -->
+            <div th:if="${param.error}" class="alert alert-danger" role="alert">
+                <i class="bi bi-exclamation-circle"></i>
+                Incorrect username or password. Try again.
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success" role="alert">
+                <i class="bi bi-check-circle"></i>
+                You've been signed out.
+            </div>
+
+            <!-- Login Form -->
+            <form th:action="@{/login}" action="#" method="post">
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input type="text" class="input" id="username" name="username" placeholder="e.g. a.mohammed" required autofocus>
+                </div>
+                <div class="field">
+                    <label for="password">Password</label>
+                    <div class="input-group">
+                        <input type="password" class="input" id="password" name="password" placeholder="Enter password" required>
+                        <button type="button" class="toggle-visibility" aria-label="Show password">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+            </form>
+
+            <p class="auth-footnote">
+                Demo credentials: <code>user</code> / <code>password</code>
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<script th:src="@{/js/staffhub.js}" src="js/staffhub.js"></script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StaffHub · Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/css/staffhub.css}" href="css/staffhub.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <span class="badge-chip badge-chip--sm">SH</span>
+            StaffHub
+        </div>
+
+        <nav class="nav-group">
+            <p class="nav-eyebrow">Overview</p>
+            <a class="nav-link active" href="dashboard.html" th:href="@{/dashboard}">
+                <i class="bi bi-grid-1x2"></i> Dashboard
+            </a>
+        </nav>
+
+        <nav class="nav-group">
+            <p class="nav-eyebrow">Directory</p>
+            <a class="nav-link" href="all-staff.html" th:href="@{/staff}">
+                <i class="bi bi-people"></i> All Staff
+            </a>
+            <a class="nav-link" href="add-staff.html" th:href="@{/staff/new}">
+                <i class="bi bi-person-plus"></i> Add Staff
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <span class="badge-chip badge-chip--sm">
+                    <span th:text="${#strings.substring(#authentication.name,0,1)}">U</span>
+                </span>
+                <div>
+                    <div class="name" th:text="${#authentication.name}">User</div>
+                    <div class="role">Administrator</div>
+                </div>
+            </div>
+            <form class="logout-form" th:action="@{/logout}" action="#" method="post">
+                <button type="submit" class="logout-btn">
+                    <i class="bi bi-box-arrow-right"></i> Sign out
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+        <div class="topbar">
+            <div>
+                <h1>Dashboard</h1>
+                <p class="page-tag">Roster overview · updated live</p>
+            </div>
+            <span class="status-pill"><span class="dot"></span> System active</span>
+        </div>
+
+        <!-- Stat ledger -->
+        <div class="stat-row">
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span class="stat-label">Total staff</span>
+                    <i class="bi bi-people text-muted"></i>
+                </div>
+                <span class="stat-figure mono">12</span>
+                <span class="stat-delta">+2 this quarter</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span class="stat-label">Active</span>
+                    <i class="bi bi-check-circle text-muted"></i>
+                </div>
+                <span class="stat-figure mono">10</span>
+                <span class="stat-delta">83% of roster</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span class="stat-label">Departments</span>
+                    <i class="bi bi-diagram-3 text-muted"></i>
+                </div>
+                <span class="stat-figure mono">4</span>
+                <span class="stat-delta flat">No change</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span class="stat-label">New this month</span>
+                    <i class="bi bi-person-plus text-muted"></i>
+                </div>
+                <span class="stat-figure mono">3</span>
+                <span class="stat-delta">+3 hires</span>
+            </div>
+        </div>
+
+        <!-- Roster preview -->
+        <div class="panel">
+            <div class="panel-header">
+                <strong>Staff directory</strong>
+                <a class="btn btn-gold btn-sm" href="add-staff.html" th:href="@{/staff/new}">
+                    <i class="bi bi-plus-lg"></i> Add new
+                </a>
+            </div>
+            <div class="panel-body">
+                <table class="roster-table">
+                    <thead>
+                    <tr>
+                        <th>Staff</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Placeholder rows until connected to the backend model (e.g. th:each="staff : ${employees}") -->
+                    <tr>
+                        <td>
+                            <div class="staff-cell">
+                                <span class="badge-chip badge-chip--sm">AY</span>
+                                <div>
+                                    <div class="staff-name">Abdulwasiu Yusuf</div>
+                                    <div class="staff-id mono">SH-00841</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>y.abdulwasiu@staffhub.com</td>
+                        <td>Network Operations</td>
+                        <td><span class="status-dot status-dot--active">Active</span></td>
+                        <td>
+                            <div class="row-actions">
+                                <button class="icon-btn" aria-label="Edit"><i class="bi bi-pencil"></i></button>
+                                <button class="icon-btn" aria-label="Delete" data-confirm="Remove this staff member?"><i class="bi bi-trash3"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="staff-cell">
+                                <span class="badge-chip badge-chip--sm">ME</span>
+                                <div>
+                                    <div class="staff-name">Mariam Emiabata</div>
+                                    <div class="staff-id mono">SH-00842</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>mariam@staffhub.com</td>
+                        <td>Operations</td>
+                        <td><span class="status-dot status-dot--active">Active</span></td>
+                        <td>
+                            <div class="row-actions">
+                                <button class="icon-btn" aria-label="Edit"><i class="bi bi-pencil"></i></button>
+                                <button class="icon-btn" aria-label="Delete" data-confirm="Remove this staff member?"><i class="bi bi-trash3"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="staff-cell">
+                                <span class="badge-chip badge-chip--sm">TF</span>
+                                <div>
+                                    <div class="staff-name">Tunde Fashola</div>
+                                    <div class="staff-id mono">SH-00845</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>t.fashola@staffhub.com</td>
+                        <td>Facilities</td>
+                        <td><span class="status-dot status-dot--onleave">On leave</span></td>
+                        <td>
+                            <div class="row-actions">
+                                <button class="icon-btn" aria-label="Edit"><i class="bi bi-pencil"></i></button>
+                                <button class="icon-btn" aria-label="Delete" data-confirm="Remove this staff member?"><i class="bi bi-trash3"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p class="empty-note">🚧 Static preview data — connect to database to replace with the live roster.</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script th:src="@{/js/staffhub.js}" src="js/staffhub.js"></script>
+</body>
+</html>

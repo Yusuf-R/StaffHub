@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StaffHub · Add Staff</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" th:href="@{/css/staffhub.css}" href="css/staffhub.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="badge-chip badge-chip--sm">SH</span>
+      StaffHub
+    </div>
+
+    <nav class="nav-group">
+      <p class="nav-eyebrow">Overview</p>
+      <a class="nav-link" href="dashboard.html" th:href="@{/dashboard}">
+        <i class="bi bi-grid-1x2"></i> Dashboard
+      </a>
+    </nav>
+
+    <nav class="nav-group">
+      <p class="nav-eyebrow">Directory</p>
+      <a class="nav-link" href="all-staff.html" th:href="@{/staff}">
+        <i class="bi bi-people"></i> Employees
+      </a>
+      <a class="nav-link active" href="add-staff.html" th:href="@{/staff/new}">
+        <i class="bi bi-person-plus"></i> Add Staff
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+                <span class="badge-chip badge-chip--sm">
+                    <span th:text="${#strings.substring(#authentication.name,0,1)}">U</span>
+                </span>
+        <div>
+          <div class="name" th:text="${#authentication.name}">User</div>
+          <div class="role">Administrator</div>
+        </div>
+      </div>
+      <form class="logout-form" th:action="@{/logout}" action="#" method="post">
+        <button type="submit" class="logout-btn">
+          <i class="bi bi-box-arrow-right"></i> Sign out
+        </button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1>Add employee</h1>
+        <p class="page-tag">New staff record · badge number auto-assigned</p>
+      </div>
+      <a class="btn btn-ghost" href="all-staff.html" th:href="@{/staff}">
+        <i class="bi bi-arrow-left"></i> Back to directory
+      </a>
+    </div>
+
+    <div class="panel" style="max-width: 760px;">
+      <div class="panel-body padded">
+        <!-- Wire this up to your controller, e.g. th:action="@{/employees/add}" -->
+        <form th:action="@{/employees/add}" action="#" method="post">
+
+          <div class="form-section">
+            <p class="form-section-title">01 · Personal details</p>
+            <p class="form-section-desc">Name and contact info as they should appear on the roster.</p>
+            <div class="form-grid">
+              <div class="field">
+                <label for="firstName">First name</label>
+                <input type="text" class="input" id="firstName" name="firstName" placeholder="Abdulwasiu" required>
+              </div>
+              <div class="field">
+                <label for="lastName">Last name</label>
+                <input type="text" class="input" id="lastName" name="lastName" placeholder="Yusuf" required>
+              </div>
+              <div class="field">
+                <label for="email">Email address</label>
+                <input type="email" class="input" id="email" name="email" placeholder="name@staffhub.com" required>
+              </div>
+              <div class="field">
+                <label for="phone">Phone number</label>
+                <input type="tel" class="input" id="phone" name="phone" placeholder="+234 800 000 0000">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <p class="form-section-title">02 · Role & department</p>
+            <p class="form-section-desc">Determines dashboard grouping and reporting line.</p>
+            <div class="form-grid">
+              <div class="field">
+                <label for="department">Department</label>
+                <select class="select" id="department" name="department" required>
+                  <option value="">Select department</option>
+                  <option>Network Operations</option>
+                  <option>Operations</option>
+                  <option>Facilities</option>
+                  <option>Finance</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="jobTitle">Job title</label>
+                <input type="text" class="input" id="jobTitle" name="jobTitle" placeholder="e.g. Field Engineer" required>
+              </div>
+              <div class="field">
+                <label for="startDate">Start date</label>
+                <input type="date" class="input" id="startDate" name="startDate" required>
+              </div>
+              <div class="field">
+                <label for="status">Status</label>
+                <select class="select" id="status" name="status">
+                  <option>Active</option>
+                  <option>On leave</option>
+                  <option>Inactive</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <p class="form-section-title">03 · Notes</p>
+            <p class="form-section-desc">Optional — visible only to administrators.</p>
+            <div class="field">
+              <label for="notes">Internal notes</label>
+              <textarea class="input" id="notes" name="notes" rows="3" placeholder="Any onboarding notes worth flagging…"></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <a class="btn btn-ghost" href="all-staff.html" th:href="@{/staff}">Cancel</a>
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check2"></i> Save employee
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script th:src="@{/js/staffhub.js}" src="js/staffhub.js"></script>
+</body>
+</html>
