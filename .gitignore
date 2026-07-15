@@ -29,5 +29,13 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+# === Local / Secret Configs ===
+application-local.properties
+application-secrets.properties
+*.env
+
+# Keep the wrapper script, ignore local build temp
+.mvn/timing.properties
+
 ### VS Code ###
 .vscode/

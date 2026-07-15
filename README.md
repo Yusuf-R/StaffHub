@@ -42,15 +42,21 @@ src/
 │   │   └── com/
 │   │       └── naviroq/
 │   │           └── staffhub/
-│   │               ├── controller/    # Handles incoming HTTP requests (REST APIs)
-│   │               ├── service/       # Contains business logic
-│   │               ├── repository/    # Database access layer
-│   │               └── model/         # JPA entities and domain models
+│   │               ├── StaffHubApplication.java
+│   │               ├── config/          # Security & app configuration
+│   │               ├── controller/      # Handles incoming HTTP requests (REST APIs)
+│   │               ├── dto/             # Request/response data transfer objects
+│   │               ├── exception/       # Custom exceptions & global handlers
+│   │               ├── model/           # JPA entities and domain models
+│   │               ├── repository/      # Database access layer
+│   │               └── service/         # Contains business logic
 │   └── resources/
-│       ├── application.properties     # Application configuration
-│       ├── static/                    # Static assets
-│       └── templates/                 # HTML templates (if using Thymeleaf)
-└── test/                              # Unit and integration tests
+│       ├── application.properties         # Application configuration
+│       ├── application-dev.properties     # Development profile config
+│       ├── application-prod.properties    # Production profile config
+│       ├── static/                        # Static assets (CSS, JS, images)
+│       └── templates/                     # HTML templates (if using Thymeleaf)
+└── test/                                  # Unit and integration tests
 ```
 
 ---
