@@ -7,8 +7,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.UUID;
+
 // the shape of the object to be enforced when the client POST
 public record CreateUserRequestDto(
+        UUID employeeId,
+
         @NotBlank(message = ERR_USERNAME_BLANK)
         @Length(min = 3, max = 100, message = ERR_USERNAME_LENGTH)
         String username,

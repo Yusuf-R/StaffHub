@@ -5,17 +5,17 @@ import com.naviroq.staffhub.common.enums.RoleCode;
 import com.naviroq.staffhub.common.enums.UserStatus;
 import com.naviroq.staffhub.organization.domain.entity.Employee;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Table(name = "users")
+@Table(name = "users", schema = "staff_hub")
 public class User extends BaseEntity {
 
     @Column(nullable = false, unique = true, length = 50)
