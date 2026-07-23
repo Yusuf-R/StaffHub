@@ -1,6 +1,6 @@
 
 
-package com.naviroq.staffhub.organization.dto.department;
+package com.naviroq.staffhub.organization.domain.department.dto;
 import jakarta.validation.constraints.*;
 
 

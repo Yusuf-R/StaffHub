@@ -6,5 +6,5 @@ import com.naviroq.staffhub.common.enums.UserStatus;
 import java.util.UUID;
 
 // this will be the content of the return User object upon PUT, POST on a user credential update
-public record UserResponeDto(UUID id, String username, String email, RoleCode roleCode, UserStatus status) {
+public record UserResponseDto(UUID id, String username, String email, RoleCode roleCode, UserStatus status) {
 }

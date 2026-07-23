@@ -1,4 +1,4 @@
-package com.naviroq.staffhub.organization.entity;
+package com.naviroq.staffhub.organization.domain.entity;
 
 import com.naviroq.staffhub.common.entity.BaseEntity;
 import com.naviroq.staffhub.common.enums.EmploymentStatus;

@@ -1,4 +1,4 @@
-package com.naviroq.staffhub.organization.dto.employee;
+package com.naviroq.staffhub.organization.domain.employee.dto;
 
 import com.naviroq.staffhub.common.enums.Gender;
 import jakarta.validation.constraints.NotBlank;

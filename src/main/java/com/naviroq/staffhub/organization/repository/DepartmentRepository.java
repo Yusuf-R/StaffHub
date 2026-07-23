@@ -1,6 +1,6 @@
 package com.naviroq.staffhub.organization.repository;
 
-import com.naviroq.staffhub.organization.entity.Department;
+import com.naviroq.staffhub.organization.domain.entity.Department;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

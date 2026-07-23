@@ -3,7 +3,7 @@ package com.naviroq.staffhub.identity.domain.entity;
 import com.naviroq.staffhub.common.entity.BaseEntity;
 import com.naviroq.staffhub.common.enums.RoleCode;
 import com.naviroq.staffhub.common.enums.UserStatus;
-import com.naviroq.staffhub.organization.entity.Employee;
+import com.naviroq.staffhub.organization.domain.entity.Employee;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

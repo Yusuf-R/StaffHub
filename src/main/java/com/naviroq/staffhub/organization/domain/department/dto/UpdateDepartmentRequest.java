@@ -1,9 +1,9 @@
-package com.naviroq.staffhub.organization.dto.department;
+package com.naviroq.staffhub.organization.domain.department.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 
-public record CreateDepartmentRequest(
+public record UpdateDepartmentRequest(
 
         @NotBlank(message = "Department name cannot be blank")
         @Length(min = 2, max = 100, message = "Department name must be between 2 and 100 characters")
