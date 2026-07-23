@@ -1,0 +1,15 @@
+package com.naviroq.staffhub.organization.dto.employee;
+
+import com.naviroq.staffhub.common.enums.EmploymentStatus;
+
+import java.util.UUID;
+
+public record EmployeeResponse(
+        UUID id,
+        String employeeCode,
+        String firstName,
+        String lastName,
+        String department,
+        String position,
+        EmploymentStatus status
+) {}
