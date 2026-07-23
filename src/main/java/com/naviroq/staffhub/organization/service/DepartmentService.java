@@ -8,15 +8,10 @@ import java.util.List;
 import java.util.UUID;
 
 public interface DepartmentService {
-
     Department createDepartment(CreateDepartmentCommand command);
-
     Department getDepartmentById(UUID departmentId);
-
-    List<Department> listDepartments();
-
     Department updateDepartment(UUID departmentId, UpdateDepartmentCommand command);
-
+    List<Department> listDepartments();
     void deleteDepartment(UUID departmentId);
 
 }

@@ -28,7 +28,7 @@ public class UserMapperImpl implements UserMapper {
     }
 
     @Override
-    public UserResponseDto dto(User user) {
+    public UserResponseDto toDto(User user) {
         return new UserResponseDto(user.getId(), user.getUsername(), user.getEmail(), user.getRole(), user.getStatus());
     }
 }

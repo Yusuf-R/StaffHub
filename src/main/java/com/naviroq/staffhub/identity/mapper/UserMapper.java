@@ -10,6 +10,6 @@ import com.naviroq.staffhub.identity.domain.entity.User;
 public interface UserMapper {
     CreateUserCommand fromDto (CreateUserRequestDto dto);
     UpdateUserCommand fromDto (UpdateUserRequestDto dto);
-    UserResponseDto dto (User user);
+    UserResponseDto toDto (User user);
 
 }

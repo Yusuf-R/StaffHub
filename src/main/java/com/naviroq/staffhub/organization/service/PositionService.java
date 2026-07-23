@@ -8,15 +8,10 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PositionService {
-
     Position createPosition(CreatePositionCommand command);
-
-    Position getPositionById(UUID positionId);
-
-    List<Position> listPositions();
-
     Position updatePosition(UUID positionId, UpdatePositionCommand command);
-
+    Position getPositionById(UUID positionId);
+    List<Position> listPositions();
     void deletePosition(UUID positionId);
 
 }

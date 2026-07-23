@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface EmployeeService {
-    Employee createEmployee (CreateEmployeeCommand createEmployeeCommand);
+    Employee createEmployee (CreateEmployeeCommand command);
     Employee updateEmployee(UUID employeeId, UpdateEmployeeCommand command);
     Employee getEmployeeById(UUID employeeId);
     List <Employee> listOfEmployee();
