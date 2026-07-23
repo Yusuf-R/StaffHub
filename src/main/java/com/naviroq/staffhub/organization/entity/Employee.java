@@ -2,6 +2,7 @@ package com.naviroq.staffhub.organization.entity;
 
 import com.naviroq.staffhub.common.entity.BaseEntity;
 import com.naviroq.staffhub.common.enums.EmploymentStatus;
+import com.naviroq.staffhub.common.enums.EmploymentType;
 import com.naviroq.staffhub.common.enums.Gender;
 import com.naviroq.staffhub.identity.domain.entity.User;
 import jakarta.persistence.*;
@@ -36,6 +37,10 @@ public class Employee extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Gender gender;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EmploymentType employmentType;
 
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;

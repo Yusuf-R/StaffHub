@@ -3,7 +3,7 @@ package com.naviroq.staffhub.organization.dto.position;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 
-public record CreatePositionRequest(
+public record UpdatePositionRequest(
 
         @NotBlank(message = "Position title cannot be blank")
         @Length(min = 2, max = 100, message = "Position title must be between 2 and 100 characters")
