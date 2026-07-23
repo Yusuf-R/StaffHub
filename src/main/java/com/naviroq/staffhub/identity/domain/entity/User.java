@@ -1,4 +1,4 @@
-package com.naviroq.staffhub.identity.entity;
+package com.naviroq.staffhub.identity.domain.entity;
 
 import com.naviroq.staffhub.common.entity.BaseEntity;
 import com.naviroq.staffhub.common.enums.RoleCode;
