@@ -5,10 +5,12 @@ import com.naviroq.staffhub.organization.domain.department.UpdateDepartmentComma
 import com.naviroq.staffhub.organization.domain.entity.Department;
 import com.naviroq.staffhub.organization.repository.DepartmentRepository;
 import com.naviroq.staffhub.organization.service.DepartmentService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
+@Service
 public class DepartmentServiceImpl implements DepartmentService {
     DepartmentRepository departmentRepository;
 

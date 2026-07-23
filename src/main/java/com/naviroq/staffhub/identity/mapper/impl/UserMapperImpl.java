@@ -14,7 +14,7 @@ public class UserMapperImpl implements UserMapper {
     @Override
     public CreateUserCommand fromDto(CreateUserRequestDto dto) {
         return new CreateUserCommand(
-                dto.roleCode(),
+                dto.employeeId(),
                 dto.username(),
                 dto.email(),
                 dto.roleCode(),

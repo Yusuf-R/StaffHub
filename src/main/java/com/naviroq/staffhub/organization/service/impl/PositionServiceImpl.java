@@ -5,11 +5,12 @@ import com.naviroq.staffhub.organization.domain.position.CreatePositionCommand;
 import com.naviroq.staffhub.organization.domain.position.UpdatePositionCommand;
 import com.naviroq.staffhub.organization.repository.PositionRepository;
 import com.naviroq.staffhub.organization.service.PositionService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
-
+@Service
 public class PositionServiceImpl implements PositionService {
     PositionRepository positionRepository;
 
