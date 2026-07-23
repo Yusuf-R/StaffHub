@@ -13,20 +13,20 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) {
-        http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
-//        http.authorizeHttpRequests(auth -> auth
-//                // Allow everyone to see the login page and static resources (CSS, images)
-//                .requestMatchers("/login", "/css/**", "/js/**", "/webjars/**").permitAll()
-//                // Everything else requires authentication
-//                .anyRequest().authenticated()
-//                )
-//                .formLogin(form -> form
-//                        .loginPage("/login")          // Tell Spring to use YOUR login page
-//                        .defaultSuccessUrl("/dashboard", true) // Redirect here after successful login
-//                        .permitAll()                  // Allow everyone to access the login page
-//                )
-//                .logout(LogoutConfigurer::permitAll                  // Allow everyone to access logout
-//        );
+        // http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+        http.authorizeHttpRequests(auth -> auth
+                // Allow everyone to see the login page and static resources (CSS, images)
+                .requestMatchers("/login", "/css/**", "/js/**", "/webjars/**").permitAll()
+                // Everything else requires authentication
+                .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/login")          // Tell Spring to use YOUR login page
+                        .defaultSuccessUrl("/dashboard", true) // Redirect here after successful login
+                        .permitAll()                  // Allow everyone to access the login page
+                )
+                .logout(LogoutConfigurer::permitAll                  // Allow everyone to access logout
+        );
 
         return http.build();
     }

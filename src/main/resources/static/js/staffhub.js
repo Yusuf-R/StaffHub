@@ -9,9 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!input) return;
             var showing = input.type === 'text';
             input.type = showing ? 'password' : 'text';
-            btn.innerHTML = showing
-                ? '<i class="bi bi-eye"></i>'
-                : '<i class="bi bi-eye-slash"></i>';
+            btn.innerHTML = showing ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
             btn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
         });
     });

@@ -6,7 +6,7 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "staff")
+@Table(name = "staff", schema = "\"staffHub\"") // tell it to use staffHub instead of converting it to staff_hub
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,7 +15,7 @@ public class Staff {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", updatable = false, nullable = false)
+    @Column(updatable = false, nullable = false) // name omitted, will become 'id'
     private UUID id;
 
     @Column(nullable = false)
@@ -26,4 +26,9 @@ public class Staff {
 
     @Column(nullable = false, unique = true)
     private String email;
+
+    @Override
+    public String toString() {
+        return String.format("Staff[id: %s -- FirsName: %s -- LastName: %s -- Email: %s]", id, firstName, lastName, email);
+    }
 }
