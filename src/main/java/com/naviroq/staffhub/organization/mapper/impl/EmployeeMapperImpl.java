@@ -1,10 +1,12 @@
 package com.naviroq.staffhub.organization.mapper.impl;
 
+import com.naviroq.staffhub.identity.domain.entity.User;
 import com.naviroq.staffhub.organization.domain.employee.CreateEmployeeCommand;
 import com.naviroq.staffhub.organization.domain.employee.UpdateEmployeeCommand;
 import com.naviroq.staffhub.organization.domain.employee.dto.CreateEmployeeRequest;
 import com.naviroq.staffhub.organization.domain.employee.dto.EmployeeResponseDto;
 import com.naviroq.staffhub.organization.domain.employee.dto.UpdateEmployeeRequest;
+import com.naviroq.staffhub.organization.domain.employee.dto.UserRefDto;
 import com.naviroq.staffhub.organization.domain.entity.Employee;
 import com.naviroq.staffhub.organization.mapper.EmployeeMapper;
 import org.springframework.stereotype.Component;
@@ -47,6 +49,12 @@ public class EmployeeMapperImpl implements EmployeeMapper {
 
     @Override
     public EmployeeResponseDto toDto(Employee employee) {
+        User user = employee.getUser();
+
+        UserRefDto userRef = (user != null)
+                ? new UserRefDto(user.getId(), user.getUsername(), user.getEmail())
+                : null;
+
         return new EmployeeResponseDto(
                 employee.getId(),
                 employee.getEmployeeCode(),
@@ -54,7 +62,8 @@ public class EmployeeMapperImpl implements EmployeeMapper {
                 employee.getLastName(),
                 employee.getDepartment().getName(),
                 employee.getPosition().getTitle(),
-                employee.getStatus()
+                employee.getStatus(),
+                userRef
         );
     }
 }

@@ -1,5 +1,7 @@
 package com.naviroq.staffhub.organization.service.impl;
 
+import com.naviroq.staffhub.common.enums.EmploymentStatus;
+import com.naviroq.staffhub.common.exception.ValidationException;
 import com.naviroq.staffhub.organization.domain.employee.CreateEmployeeCommand;
 import com.naviroq.staffhub.organization.domain.employee.UpdateEmployeeCommand;
 import com.naviroq.staffhub.organization.domain.entity.Department;
@@ -9,38 +11,46 @@ import com.naviroq.staffhub.organization.repository.DepartmentRepository;
 import com.naviroq.staffhub.organization.repository.EmployeeRepository;
 import com.naviroq.staffhub.organization.repository.PositionRepository;
 import com.naviroq.staffhub.organization.service.EmployeeService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@AutoConfiguration
+@RequiredArgsConstructor
+@Slf4j
 public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final PositionRepository positionRepository;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository, PositionRepository positionRepository) {
-        this.employeeRepository = employeeRepository;
-        this.departmentRepository = departmentRepository;
-        this.positionRepository = positionRepository;
-    }
-
+//    public EmployeeServiceImpl(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository, PositionRepository positionRepository) {
+//        this.employeeRepository = employeeRepository;
+//        this.departmentRepository = departmentRepository;
+//        this.positionRepository = positionRepository;
+//    }
 
     @Override
     public Employee createEmployee(CreateEmployeeCommand command) {
-
         Department department = departmentRepository.findById(command.departmentId())
-                .orElseThrow(() -> new RuntimeException("Department not found"));
+                .orElseThrow(() -> new ValidationException("Department not found: " + command.departmentId()));
 
+        // 2. Fetch Position by UUID
         Position position = positionRepository.findById(command.positionId())
-                .orElseThrow(() -> new RuntimeException("Position not found"));
+                .orElseThrow(() -> new ValidationException("Position not found: " + command.positionId()));
 
+        // 3. Fetch Manager (if provided)
         Employee manager = null;
-
         if (command.managerId() != null) {
             manager = employeeRepository.findById(command.managerId())
-                    .orElseThrow(() -> new RuntimeException("Manager not found"));
+                    .orElseThrow(() -> new ValidationException("Manager not found: " + command.managerId()));
         }
 
         Employee employee = Employee.builder()
@@ -93,6 +103,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeRepository.save(employee);
     }
 
+    // Paginated
+    public Employee paginatedGetAllEmployees(int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return (Employee) employeeRepository.findAll(pageable);
+    }
+
+    // filter
+
     @Override
     public Employee getEmployeeById(UUID employeeId) {
 
@@ -111,5 +129,27 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = getEmployeeById(employeeId);
         employeeRepository.delete(employee);
 
+    }
+
+    @Override
+    public List<Employee> getAllEmployees() {
+        return employeeRepository.findAll();  // Built into JpaRepository
+    }
+
+    @Override
+    public List<Employee> findByDepartment(String department) {
+        return employeeRepository.findByDepartment_Name(department);
+    }
+
+    @Override
+    public List<Employee> findByStatus(String status) {
+        EmploymentStatus employmentStatus = EmploymentStatus.valueOf(status.toUpperCase());
+        return employeeRepository.findByStatus(employmentStatus);
+    }
+
+    @Override
+    public List<Employee> findByDepartmentAndStatus(String department, String status) {
+        EmploymentStatus employmentStatus = EmploymentStatus.valueOf(status.toUpperCase());
+        return employeeRepository.findByDepartment_NameAndStatus(department, employmentStatus);
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,8 +26,9 @@ public class EmployeeController {
         this.employeeMapper = employeeMapper;
     }
 
+    // CREATE
     @PostMapping
-    public ResponseEntity<EmployeeResponseDto> createEmployee (
+    public ResponseEntity<EmployeeResponseDto> createEmployee(
             @Valid
             @RequestBody
             CreateEmployeeRequest request
@@ -40,6 +42,44 @@ public class EmployeeController {
                 .body(employeeMapper.toDto(employee));
     }
 
+    // READ ALL
+    @GetMapping
+    public ResponseEntity<List<EmployeeResponseDto>> getAllEmployees() {
+        List<Employee> employees = employeeService.listOfEmployee();
+
+        List<EmployeeResponseDto> response = employees.stream()
+                .map(employeeMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(response);
+    }
+
+    // Filter
+//    @GetMapping
+//    public ResponseEntity<List<EmployeeResponseDto>> getAllEmployees(
+//            @RequestParam(required = false) String department,
+//            @RequestParam(required = false) String status
+//    ) {
+//        List<Employee> employees;
+//
+//        if (department != null && status != null) {
+//            employees = employeeService.findByDepartmentAndStatus(department, status);
+//        } else if (department != null) {
+//            employees = employeeService.findByDepartment(department);
+//        } else if (status != null) {
+//            employees = employeeService.findByStatus(status);
+//        } else {
+//            employees = employeeService.getAllEmployees();
+//        }
+//
+//        List<EmployeeResponseDto> response = employees.stream()
+//                .map(employeeMapper::toDto)
+//                .toList();
+//
+//        return ResponseEntity.ok(response);
+//    }
+
+
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeResponseDto> getEmployee(
             @PathVariable UUID id
@@ -52,17 +92,6 @@ public class EmployeeController {
         );
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<EmployeeSummaryResponse>> listEmployees() {
-//
-//        List<EmployeeSummaryResponse> response =
-//                employeeService.listOfEmployee()
-//                        .stream()
-//                        .map(employeeMapper::toSummaryDto)
-//                        .toList();
-//
-//        return ResponseEntity.ok(response);
-//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<EmployeeResponseDto> updateEmployee(

@@ -11,6 +11,16 @@ public interface EmployeeService {
     Employee createEmployee (CreateEmployeeCommand command);
     Employee updateEmployee(UUID employeeId, UpdateEmployeeCommand command);
     Employee getEmployeeById(UUID employeeId);
+    Employee paginatedGetAllEmployees(int page, int size, String sortBy);
     List <Employee> listOfEmployee();
+
     void deleteEmployee (UUID employeeId);
+
+    List<Employee> findByDepartmentAndStatus(String department, String status);
+
+    List<Employee> findByDepartment(String department);
+
+    List<Employee> findByStatus(String status);
+
+    List<Employee> getAllEmployees();
 }

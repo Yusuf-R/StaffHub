@@ -3,15 +3,12 @@
 package com.naviroq.staffhub.organization.domain.department.dto;
 import jakarta.validation.constraints.*;
 
+import java.util.UUID;
+
 
 public record DepartmentResponseDto(
-
-        @NotBlank
+        UUID id,
         String name,
-
-        @NotBlank
         String code,
-
         String description
-
 ) {}

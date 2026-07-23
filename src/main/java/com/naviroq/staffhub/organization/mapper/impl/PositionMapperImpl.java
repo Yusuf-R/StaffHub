@@ -25,6 +25,6 @@ public class PositionMapperImpl implements PositionMapper {
 
     @Override
     public PositionResponseDto toDto(Position position) {
-        return new PositionResponseDto(position.getTitle(), position.getDescription());
+        return new PositionResponseDto(position.getId(), position.getTitle(), position.getDescription());
     }
 }

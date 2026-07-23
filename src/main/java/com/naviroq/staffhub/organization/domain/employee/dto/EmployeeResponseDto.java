@@ -11,5 +11,6 @@ public record EmployeeResponseDto(
         String lastName,
         String department,
         String position,
-        EmploymentStatus status
+        EmploymentStatus status,
+        UserRefDto user
 ) {}

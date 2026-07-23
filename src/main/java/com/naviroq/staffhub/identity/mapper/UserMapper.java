@@ -11,5 +11,4 @@ public interface UserMapper {
     CreateUserCommand fromDto (CreateUserRequestDto dto);
     UpdateUserCommand fromDto (UpdateUserRequestDto dto);
     UserResponseDto toDto (User user);
-
 }

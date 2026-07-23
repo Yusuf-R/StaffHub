@@ -11,6 +11,9 @@ import java.util.UUID;
 
 // the shape of the object to be enforced when the client POST
 public record CreateUserRequestDto(
+        // ⚠️ CRUCIAL: We need the Employee ID from Step 1 to link them
+        // thus we must first create the employee before we create the user
+        @NotNull(message = "Employee ID is required to link the user")
         UUID employeeId,
 
         @NotBlank(message = ERR_USERNAME_BLANK)

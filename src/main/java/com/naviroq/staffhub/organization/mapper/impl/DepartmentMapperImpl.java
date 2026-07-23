@@ -23,6 +23,6 @@ public class DepartmentMapperImpl implements DepartmentMapper {
 
     @Override
     public DepartmentResponseDto toDto(Department department) {
-        return new DepartmentResponseDto(department.getName(), department.getCode(), department.getDescription());
+        return new DepartmentResponseDto(department.getId(), department.getName(), department.getCode(), department.getDescription());
     }
 }
