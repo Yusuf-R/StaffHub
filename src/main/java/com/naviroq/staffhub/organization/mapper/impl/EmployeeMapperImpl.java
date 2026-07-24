@@ -16,7 +16,6 @@ public class EmployeeMapperImpl implements EmployeeMapper {
     @Override
     public CreateEmployeeCommand fromDto(CreateEmployeeRequest dto) {
         return new CreateEmployeeCommand(
-                dto.employeeCode(),
                 dto.firstName(),
                 dto.lastName(),
                 dto.gender(),
@@ -24,6 +23,10 @@ public class EmployeeMapperImpl implements EmployeeMapper {
                 dto.hireDate(),
                 dto.phone(),
                 dto.address(),
+                dto.bio(),
+                dto.profilePictureUrl(),
+                dto.employmentType(),
+                dto.status(),
                 dto.departmentId(),
                 dto.positionId(),
                 dto.managerId()
@@ -40,7 +43,9 @@ public class EmployeeMapperImpl implements EmployeeMapper {
                 dto.phone(),
                 dto.address(),
                 dto.bio(),
+                dto.profilePictureUrl(),
                 dto.status(),
+                dto.employmentType(),
                 dto.departmentId(),
                 dto.positionId(),
                 dto.managerId()

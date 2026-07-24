@@ -1,6 +1,7 @@
 package com.naviroq.staffhub.organization.domain.employee.dto;
 
 import com.naviroq.staffhub.common.enums.EmploymentStatus;
+import com.naviroq.staffhub.common.enums.EmploymentType;
 import com.naviroq.staffhub.common.enums.Gender;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -32,8 +33,11 @@ public record UpdateEmployeeRequest(
 
         String bio,
 
-        @NotNull(message = "Employment status is required")
-        EmploymentStatus status,
+        String profilePictureUrl,
+
+        EmploymentType employmentType,  // ✅ No @NotNull. FE can omit it.
+
+        EmploymentStatus status,         // ✅ No @NotNull. FE can omit it
 
         @NotNull(message = "Department is required")
         UUID departmentId,

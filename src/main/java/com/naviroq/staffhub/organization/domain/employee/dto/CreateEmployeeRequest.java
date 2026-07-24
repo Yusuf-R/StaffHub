@@ -1,5 +1,7 @@
 package com.naviroq.staffhub.organization.domain.employee.dto;
 
+import com.naviroq.staffhub.common.enums.EmploymentStatus;
+import com.naviroq.staffhub.common.enums.EmploymentType;
 import com.naviroq.staffhub.common.enums.Gender;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,10 +11,6 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public record CreateEmployeeRequest(
-
-        @NotBlank(message = "Employee code cannot be blank")
-        @Length(min = 3, max = 20, message = "Employee code must be between 3 and 20 characters")
-        String employeeCode,
 
         @NotBlank(message = "First name cannot be blank")
         @Length(max = 100, message = "First name cannot exceed 100 characters")
@@ -35,6 +33,14 @@ public record CreateEmployeeRequest(
 
         @Length(max = 255, message = "Address cannot exceed 255 characters")
         String address,
+
+        String bio,
+
+        String profilePictureUrl,
+
+        EmploymentType employmentType,  // ✅ No @NotNull. FE can omit it.
+
+        EmploymentStatus status,         // ✅ No @NotNull. FE can omit it
 
         @NotNull(message = "Department is required")
         UUID departmentId,

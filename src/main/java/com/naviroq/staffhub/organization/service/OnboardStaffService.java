@@ -3,7 +3,7 @@ package com.naviroq.staffhub.organization.service;
 import com.naviroq.staffhub.identity.domain.entity.User;
 import com.naviroq.staffhub.organization.domain.employee.OnboardStaffCommand;
 
-public interface StaffOnboardingService {
+public interface OnboardStaffService {
 
     /**
      * Onboards a new staff member by creating both the Employee profile
@@ -14,3 +14,4 @@ public interface StaffOnboardingService {
      */
     User onboardStaff(OnboardStaffCommand command);
 }
+

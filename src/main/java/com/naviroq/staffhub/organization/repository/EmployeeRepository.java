@@ -5,6 +5,7 @@ import com.naviroq.staffhub.organization.domain.entity.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
@@ -14,4 +15,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
     List<Employee> findByStatus(EmploymentStatus status);
 
     List<Employee> findByDepartment_NameAndStatus(String departmentName, EmploymentStatus status);
+
+    boolean existsByEmployeeCode(String employeeCode);
+
+    Optional<Employee> findByEmployeeCode(String employeeCode);
 }

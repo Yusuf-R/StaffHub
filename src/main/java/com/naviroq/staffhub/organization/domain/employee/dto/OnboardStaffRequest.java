@@ -10,11 +10,9 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public record OnboardStaffRequest(
+        // this combines the client request requirement of both employee + staff
 
         // ---- EMPLOYEE FIELDS ----
-        @NotBlank(message = "Employee code cannot be blank")
-        @Length(min = 3, max = 20)
-        String employeeCode,
 
         @NotBlank(message = "First name cannot be blank")
         String firstName,
@@ -72,4 +70,5 @@ public record OnboardStaffRequest(
         RoleCode roleCode
 
 ) {
+
 }

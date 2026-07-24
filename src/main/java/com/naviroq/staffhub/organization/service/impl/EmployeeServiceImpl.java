@@ -1,6 +1,7 @@
 package com.naviroq.staffhub.organization.service.impl;
 
 import com.naviroq.staffhub.common.enums.EmploymentStatus;
+import com.naviroq.staffhub.common.enums.EmploymentType;
 import com.naviroq.staffhub.common.exception.ValidationException;
 import com.naviroq.staffhub.organization.domain.employee.CreateEmployeeCommand;
 import com.naviroq.staffhub.organization.domain.employee.UpdateEmployeeCommand;
@@ -11,9 +12,9 @@ import com.naviroq.staffhub.organization.repository.DepartmentRepository;
 import com.naviroq.staffhub.organization.repository.EmployeeRepository;
 import com.naviroq.staffhub.organization.repository.PositionRepository;
 import com.naviroq.staffhub.organization.service.EmployeeService;
-import lombok.RequiredArgsConstructor;
+import com.naviroq.staffhub.organization.service.util.EmployeeCodeGeneratorService;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,22 +24,25 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@AutoConfiguration
-@RequiredArgsConstructor
 @Slf4j
 public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final PositionRepository positionRepository;
+    private final EmployeeCodeGeneratorService employeeCodeGeneratorService;
 
-//    public EmployeeServiceImpl(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository, PositionRepository positionRepository) {
-//        this.employeeRepository = employeeRepository;
-//        this.departmentRepository = departmentRepository;
-//        this.positionRepository = positionRepository;
-//    }
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository, PositionRepository positionRepository, EmployeeCodeGeneratorService employeeCodeGeneratorService) {
+        this.employeeRepository = employeeRepository;
+        this.departmentRepository = departmentRepository;
+        this.positionRepository = positionRepository;
+        this.employeeCodeGeneratorService = employeeCodeGeneratorService;
+    }
 
     @Override
+    @Transactional
     public Employee createEmployee(CreateEmployeeCommand command) {
+        log.info("Creating employee...");
+
         Department department = departmentRepository.findById(command.departmentId())
                 .orElseThrow(() -> new ValidationException("Department not found: " + command.departmentId()));
 
@@ -53,8 +57,19 @@ public class EmployeeServiceImpl implements EmployeeService {
                     .orElseThrow(() -> new ValidationException("Manager not found: " + command.managerId()));
         }
 
+        EmploymentType employmentType = command.employmentType() != null
+                ? command.employmentType()
+                : EmploymentType.FULL_TIME;
+
+        EmploymentStatus status = command.status() != null
+                ? command.status()
+                : EmploymentStatus.PROBATION;  // or ACTIVE
+
+        String employeeCode = generateUniqueEmployeeCode(department);
+        log.info("Generated employee code: {}", employeeCode);
+
         Employee employee = Employee.builder()
-                .employeeCode(command.employeeCode())
+                .employeeCode(employeeCode)
                 .firstName(command.firstName())
                 .lastName(command.lastName())
                 .gender(command.gender())
@@ -65,6 +80,10 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .department(department)
                 .position(position)
                 .manager(manager)
+                .employmentType(employmentType)
+                .bio(command.bio())
+                .profilePictureUrl(command.profilePictureUrl())
+                .status(status)
                 .build();
 
         return employeeRepository.save(employee);
@@ -133,7 +152,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<Employee> getAllEmployees() {
-        return employeeRepository.findAll();  // Built into JpaRepository
+        return employeeRepository.findAll();
     }
 
     @Override
@@ -151,5 +170,21 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<Employee> findByDepartmentAndStatus(String department, String status) {
         EmploymentStatus employmentStatus = EmploymentStatus.valueOf(status.toUpperCase());
         return employeeRepository.findByDepartment_NameAndStatus(department, employmentStatus);
+    }
+
+    private String generateUniqueEmployeeCode(Department department) {
+        int attempts = 0;
+        String employeeCode;
+
+        do {
+            employeeCode = employeeCodeGeneratorService.generateEmployeeCode(department);
+            attempts++;
+        } while (employeeRepository.existsByEmployeeCode(employeeCode) && attempts < 5);
+
+        if (employeeRepository.existsByEmployeeCode(employeeCode)) {
+            throw new RuntimeException("Failed to generate unique employee code after 5 attempts");
+        }
+
+        return employeeCode;
     }
 }

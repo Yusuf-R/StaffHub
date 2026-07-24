@@ -19,7 +19,7 @@ import java.time.LocalDate;
 @Builder
 public class Employee extends BaseEntity {
 
-    @Column(name = "employee_code", nullable = false, unique = true, length = 20)
+    @Column(name = "employee_code", nullable = false, unique = true, length = 64)
     private String employeeCode;
 
     @Column(name = "first_name", nullable = false)

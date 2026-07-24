@@ -4,7 +4,7 @@ import com.naviroq.staffhub.common.enums.EmploymentStatus;
 
 import java.util.UUID;
 
-public record EmployeeResponseDto(
+public record OnboardStaffResponseDto(
         UUID id,
         String employeeCode,
         String firstName,
@@ -12,5 +12,5 @@ public record EmployeeResponseDto(
         String department,
         String position,
         EmploymentStatus status,
-        UserRefDto user // will remove later
-) {}
+        UserRefDto user
+) { }

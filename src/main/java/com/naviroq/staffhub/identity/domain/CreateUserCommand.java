@@ -13,4 +13,5 @@ public record CreateUserCommand(
         RoleCode roleCode,
         String password
 ) {
+
 }
