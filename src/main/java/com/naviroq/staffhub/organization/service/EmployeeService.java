@@ -14,7 +14,6 @@ public interface EmployeeService {
     // --- Write operations ---
     Employee createEmployee(CreateEmployeeCommand command);
     Employee updateEmployee(UUID employeeId, UpdateEmployeeCommand command);
-    void deleteEmployee(UUID employeeId);
 
     // --- Read operations (ALL should load department, position, user) ---
     Employee getEmployeeById(UUID employeeId);
@@ -23,6 +22,12 @@ public interface EmployeeService {
     List<Employee> findByDepartment(String department);
     List<Employee> findByStatus(String status);
     List<Employee> findByDepartmentAndStatus(String department, String status);
+
+    // 👇 UPDATED: Delete with a reason
+    void deleteEmployee(UUID employeeId, String reason);
+
+    // 👇 NEW: Restore method
+    void restoreEmployee(UUID employeeId);
 
     // --- Paginated (later) ---
     Page<Employee> paginatedGetAllEmployees(int page, int size, String sortBy);

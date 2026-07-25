@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -62,4 +63,15 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
             "LEFT JOIN FETCH e.position " +
             "LEFT JOIN FETCH e.user")
     Page<Employee> findAllWithDetails(Pageable pageable);
+
+    // 👇 Query to find EMPLOYEES (including deleted ones) by ID (ignores @Where)
+    @Query("SELECT e FROM Employee e " +
+            "LEFT JOIN FETCH e.department " +
+            "LEFT JOIN FETCH e.position " +
+            "LEFT JOIN FETCH e.user " +
+            "WHERE e.id = :id")
+    Optional<Employee> findDeletedById(@Param("id") UUID id);
+
+    // 👇 Find all direct reports of a manager
+    List<Employee> findByManagerId(UUID managerId);
 }

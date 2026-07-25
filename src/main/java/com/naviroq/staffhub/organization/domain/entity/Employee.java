@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "employees", schema = "staff_hub")
@@ -58,6 +59,14 @@ public class Employee extends BaseEntity {
     @Column(nullable = false)
     private EmploymentStatus status;
 
+    // ---------- SOFT DELETE FIELDS ----------
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;       // null = active, not-null = deleted
+
+    @Column(name = "deletion_reason", length = 500)
+    private String deletionReason;         // Why they were deleted
+
+    // ---------- RELATIONSHIPS ----------
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
@@ -72,4 +81,21 @@ public class Employee extends BaseEntity {
 
     @OneToOne(mappedBy = "employee")
     private User user;
+
+    // ---------- HELPER METHODS ----------
+    public void softDelete(String reason) {
+        this.deletedAt = LocalDateTime.now();
+        this.deletionReason = reason;
+        this.status = EmploymentStatus.TERMINATED;  // Also update the status
+    }
+
+    public void restore() {
+        this.deletedAt = null;
+        this.deletionReason = null;
+        this.status = EmploymentStatus.ACTIVE;  // Restore to active status
+    }
+
+    public boolean isDeleted() {
+        return deletedAt != null;
+    }
 }

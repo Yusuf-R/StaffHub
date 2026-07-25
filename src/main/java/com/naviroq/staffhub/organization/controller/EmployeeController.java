@@ -109,14 +109,21 @@ public class EmployeeController {
         );
     }
 
+    // 👇 DELETE endpoint with Request Parameter for the reason
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEmployee(
-            @PathVariable UUID id
+            @PathVariable("id") UUID employeeId,
+            @RequestParam(value = "reason", required = false, defaultValue = "No reason provided") String reason
     ) {
-
-        employeeService.deleteEmployee(id);
-
+        employeeService.deleteEmployee(employeeId, reason);
         return ResponseEntity.noContent().build();
+    }
+
+    // 👇 NEW: Restore endpoint
+    @PatchMapping("/{id}/restore")  // Or @PutMapping
+    public ResponseEntity<Void> restoreEmployee(@PathVariable("id") UUID employeeId) {
+        employeeService.restoreEmployee(employeeId);
+        return ResponseEntity.ok().build();
     }
 
 }
