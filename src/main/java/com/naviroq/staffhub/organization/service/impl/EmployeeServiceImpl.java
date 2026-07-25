@@ -13,30 +13,32 @@ import com.naviroq.staffhub.organization.repository.EmployeeRepository;
 import com.naviroq.staffhub.organization.repository.PositionRepository;
 import com.naviroq.staffhub.organization.service.EmployeeService;
 import com.naviroq.staffhub.organization.service.util.EmployeeCodeGeneratorService;
-import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 @Slf4j
 public class EmployeeServiceImpl implements EmployeeService {
+
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final PositionRepository positionRepository;
     private final EmployeeCodeGeneratorService employeeCodeGeneratorService;
+    
+    // Used the AllArgsConstructor to generate the Constructor Automatically
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository, PositionRepository positionRepository, EmployeeCodeGeneratorService employeeCodeGeneratorService) {
-        this.employeeRepository = employeeRepository;
-        this.departmentRepository = departmentRepository;
-        this.positionRepository = positionRepository;
-        this.employeeCodeGeneratorService = employeeCodeGeneratorService;
-    }
+    // ---------- WRITE OPERATIONS ----------
 
     @Override
     @Transactional
@@ -46,11 +48,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         Department department = departmentRepository.findById(command.departmentId())
                 .orElseThrow(() -> new ValidationException("Department not found: " + command.departmentId()));
 
-        // 2. Fetch Position by UUID
         Position position = positionRepository.findById(command.positionId())
                 .orElseThrow(() -> new ValidationException("Position not found: " + command.positionId()));
 
-        // 3. Fetch Manager (if provided)
         Employee manager = null;
         if (command.managerId() != null) {
             manager = employeeRepository.findById(command.managerId())
@@ -63,7 +63,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         EmploymentStatus status = command.status() != null
                 ? command.status()
-                : EmploymentStatus.PROBATION;  // or ACTIVE
+                : EmploymentStatus.PROBATION;
 
         String employeeCode = generateUniqueEmployeeCode(department);
         log.info("Generated employee code: {}", employeeCode);
@@ -90,8 +90,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @Transactional
     public Employee updateEmployee(UUID employeeId, UpdateEmployeeCommand command) {
-
         Employee employee = getEmployeeById(employeeId);
 
         Department department = departmentRepository.findById(command.departmentId())
@@ -101,7 +101,6 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(() -> new RuntimeException("Position not found"));
 
         Employee manager = null;
-
         if (command.managerId() != null) {
             manager = employeeRepository.findById(command.managerId())
                     .orElseThrow(() -> new RuntimeException("Manager not found"));
@@ -122,55 +121,64 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeRepository.save(employee);
     }
 
-    // Paginated
-    public Employee paginatedGetAllEmployees(int page, int size, String sortBy) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        return (Employee) employeeRepository.findAll(pageable);
-    }
-
-    // filter
-
     @Override
-    public Employee getEmployeeById(UUID employeeId) {
-
-        return employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
-
-    }
-
-    @Override
-    public List<Employee> listOfEmployee() {
-        return employeeRepository.findAll();
-    }
-
-    @Override
+    @Transactional
     public void deleteEmployee(UUID employeeId) {
         Employee employee = getEmployeeById(employeeId);
         employeeRepository.delete(employee);
+    }
 
+    // ---------- READ OPERATIONS (ALL use JOIN FETCH now) ----------
+
+    @Override
+    @Transactional(readOnly = true)
+    public Employee getEmployeeById(UUID employeeId) {
+        return employeeRepository.findByIdWithDetails(employeeId)   
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<Employee> listOfEmployee() {
+        return employeeRepository.findAllWithDetails();   
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Employee> getAllEmployees() {
-        return employeeRepository.findAll();
+        return employeeRepository.findAllWithDetails();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Employee> findByDepartment(String department) {
-        return employeeRepository.findByDepartment_Name(department);
+        return employeeRepository.findByDepartmentWithDetails(department);   
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Employee> findByStatus(String status) {
         EmploymentStatus employmentStatus = EmploymentStatus.valueOf(status.toUpperCase());
-        return employeeRepository.findByStatus(employmentStatus);
+        return employeeRepository.findByStatusWithDetails(employmentStatus);   
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Employee> findByDepartmentAndStatus(String department, String status) {
         EmploymentStatus employmentStatus = EmploymentStatus.valueOf(status.toUpperCase());
-        return employeeRepository.findByDepartment_NameAndStatus(department, employmentStatus);
+        return employeeRepository.findByDepartmentAndStatusWithDetails(department, employmentStatus);   
     }
+
+    // ---------- PAGINATION (Fixed) ----------
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Employee> paginatedGetAllEmployees(int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return employeeRepository.findAllWithDetails(pageable);
+    }
+
+    // ---------- UTILITY ----------
 
     private String generateUniqueEmployeeCode(Department department) {
         int attempts = 0;

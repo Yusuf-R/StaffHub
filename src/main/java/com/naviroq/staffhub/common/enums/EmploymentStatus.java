@@ -1,7 +1,6 @@
 package com.naviroq.staffhub.common.enums;
 
 public enum EmploymentStatus {
-
     ACTIVE,
     INACTIVE,
     PROBATION,
@@ -9,5 +8,4 @@ public enum EmploymentStatus {
     TERMINATED,
     RESIGNED,
     RETIRED
-
 }

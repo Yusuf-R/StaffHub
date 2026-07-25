@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class OnboardStaffMapperImpl implements OnboardStaffMapper {
 
     @Override
-    public OnboardStaffCommand createOnboardStaff(OnboardStaffRequest dto) {
+    public OnboardStaffCommand fromDto (OnboardStaffRequest dto) {
         return new OnboardStaffCommand(
                 dto.firstName(),
                 dto.lastName(),

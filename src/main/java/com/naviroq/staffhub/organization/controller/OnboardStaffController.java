@@ -1,7 +1,9 @@
 package com.naviroq.staffhub.organization.controller;
 
 import com.naviroq.staffhub.identity.domain.dto.UserResponseDto;
+import com.naviroq.staffhub.identity.domain.entity.User;
 import com.naviroq.staffhub.identity.mapper.UserMapper;
+import com.naviroq.staffhub.organization.domain.employee.OnboardStaffCommand;
 import com.naviroq.staffhub.organization.domain.employee.dto.OnboardStaffRequest;
 import com.naviroq.staffhub.organization.mapper.OnboardStaffMapper;
 import com.naviroq.staffhub.organization.service.OnboardStaffService;
@@ -29,9 +31,9 @@ public class OnboardStaffController {
     public ResponseEntity<UserResponseDto> onboardStaff(
             @Valid @RequestBody OnboardStaffRequest request
     ) {
-        var command = onboardStaffMapper.createOnboardStaff(request);
+        OnboardStaffCommand command = onboardStaffMapper.fromDto(request);
 
-        var user = onboardingService.onboardStaff(command);
+        User user = onboardingService.onboardStaff(command);
 
         // 3. Map User → Response
         return ResponseEntity.status(HttpStatus.CREATED)

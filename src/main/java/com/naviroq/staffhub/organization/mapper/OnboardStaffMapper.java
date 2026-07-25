@@ -7,6 +7,6 @@ import com.naviroq.staffhub.organization.domain.entity.Employee;
 
 
 public interface OnboardStaffMapper {
-    OnboardStaffCommand createOnboardStaff(OnboardStaffRequest dto);
+    OnboardStaffCommand fromDto (OnboardStaffRequest dto);
     OnboardStaffResponseDto toDto (Employee employee);
 }
