@@ -43,9 +43,34 @@ public class EmployeeController {
     }
 
     // READ ALL
+    /**
+     *     public ResponseEntity<List<EmployeeResponseDto>> getAllEmployees() {
+     *         List<Employee> employees = employeeService.listOfEmployee();
+     *         List<EmployeeResponseDto> response = employees.stream()
+     *                 .map(employeeMapper::toDto)
+     *                 .toList();
+     *         return ResponseEntity.ok(response);
+     *     }
+     */
+
+
+    // Read ALL + Filter Options
     @GetMapping
-    public ResponseEntity<List<EmployeeResponseDto>> getAllEmployees() {
-        List<Employee> employees = employeeService.listOfEmployee();
+    public ResponseEntity<List<EmployeeResponseDto>> getAllEmployees(
+            @RequestParam(required = false) String department,
+            @RequestParam(required = false) String status
+    ) {
+        List<Employee> employees;
+
+        if (department != null && status != null) {
+            employees = employeeService.findByDepartmentAndStatus(department, status);
+        } else if (department != null) {
+            employees = employeeService.findByDepartment(department);
+        } else if (status != null) {
+            employees = employeeService.findByStatus(status);
+        } else {
+            employees = employeeService.getAllEmployees();
+        }
 
         List<EmployeeResponseDto> response = employees.stream()
                 .map(employeeMapper::toDto)
@@ -53,31 +78,6 @@ public class EmployeeController {
 
         return ResponseEntity.ok(response);
     }
-
-    // Filter
-//    @GetMapping
-//    public ResponseEntity<List<EmployeeResponseDto>> getAllEmployees(
-//            @RequestParam(required = false) String department,
-//            @RequestParam(required = false) String status
-//    ) {
-//        List<Employee> employees;
-//
-//        if (department != null && status != null) {
-//            employees = employeeService.findByDepartmentAndStatus(department, status);
-//        } else if (department != null) {
-//            employees = employeeService.findByDepartment(department);
-//        } else if (status != null) {
-//            employees = employeeService.findByStatus(status);
-//        } else {
-//            employees = employeeService.getAllEmployees();
-//        }
-//
-//        List<EmployeeResponseDto> response = employees.stream()
-//                .map(employeeMapper::toDto)
-//                .toList();
-//
-//        return ResponseEntity.ok(response);
-//    }
 
 
     @GetMapping("/{id}")

@@ -61,14 +61,33 @@ public class EmployeeMapperImpl implements EmployeeMapper {
                 : null;
 
         return new EmployeeResponseDto(
+                // Basic info
                 employee.getId(),
                 employee.getEmployeeCode(),
                 employee.getFirstName(),
                 employee.getLastName(),
-                employee.getDepartment().getName(),
-                employee.getPosition().getTitle(),
-                employee.getStatus(),
-                userRef
+
+                // Contact & Personal
+                employee.getBio(),
+                employee.getDateOfBirth() != null ? employee.getDateOfBirth().toString() : null,
+                employee.getPhone(),
+                employee.getAddress(),
+                employee.getProfilePictureUrl() != null ? employee.getProfilePictureUrl() : null,
+
+                // Department & Position (names)
+                employee.getDepartment() != null ? employee.getDepartment().getName() : null,
+                employee.getPosition() != null ? employee.getPosition().getTitle() : null,
+
+                // Employment & Status
+                employee.getEmploymentType(),
+                user != null ? user.getStatus() : null, employee.getStatus(),
+
+                // User reference
+                userRef,
+
+                // IDs
+                employee.getDepartment() != null ? employee.getDepartment().getId() : null,
+                employee.getPosition() != null ? employee.getPosition().getId() : null
         );
     }
 }

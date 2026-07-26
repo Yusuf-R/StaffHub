@@ -35,9 +35,9 @@ public record UpdateEmployeeRequest(
 
         String profilePictureUrl,
 
-        EmploymentType employmentType,  // ✅ No @NotNull. FE can omit it.
+        EmploymentType employmentType,
 
-        EmploymentStatus status,         // ✅ No @NotNull. FE can omit it
+        EmploymentStatus status,
 
         @NotNull(message = "Department is required")
         UUID departmentId,
