@@ -57,7 +57,7 @@ public class EmployeeMapperImpl implements EmployeeMapper {
         User user = employee.getUser();
 
         UserRefDto userRef = (user != null)
-                ? new UserRefDto(user.getId(), user.getUsername(), user.getEmail())
+                ? new UserRefDto(user.getId(), user.getUsername(), user.getEmail(), user.getRole())
                 : null;
 
         return new EmployeeResponseDto(
