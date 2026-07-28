@@ -39,3 +39,4 @@ application-secrets.properties
 
 ### VS Code ###
 .vscode/
+/.envrc
