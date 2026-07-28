@@ -48,7 +48,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; // We don't have account expiry logic yet, set true.
+        return true;
     }
 
     @Override

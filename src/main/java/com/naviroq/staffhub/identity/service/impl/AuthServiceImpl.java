@@ -8,6 +8,7 @@ import com.naviroq.staffhub.identity.domain.entity.RefreshToken;
 import com.naviroq.staffhub.identity.domain.entity.User;
 import com.naviroq.staffhub.identity.repository.RefreshTokenRepository;
 import com.naviroq.staffhub.identity.repository.UserRepository;
+import com.naviroq.staffhub.identity.security.CustomUserDetails;
 import com.naviroq.staffhub.identity.security.CustomUserDetailsService;
 import com.naviroq.staffhub.identity.security.JwtService;
 import com.naviroq.staffhub.identity.service.AuthService;
@@ -48,33 +49,35 @@ public class AuthServiceImpl implements AuthService {
     public LoginResponseDto login(LoginCommand command, HttpServletRequest request, HttpServletResponse response) {
         log.info("Login attempt for email: {}", command.email());
 
-        // 1. Authenticate
+        // 1. Authenticate (Spring Security loads the user from DB internally)
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(command.email(), command.password())
         );
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        // 2. Get User entity
-        User user = userRepository.findByEmail(command.email())
-                .orElseThrow(() -> new ValidationException("User not found"));
+        // 2. Extract the User entity from the authentication object
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        // getPrincipal will return our entire object - now cast to type CustomUserDetails
+        assert customUserDetails != null;
+        User user = customUserDetails.getUser(); // ✅ This is your User entity. No need to fetch again.
 
         // 3. Revoke ALL existing tokens (single session)
-        refreshTokenRepository.revokeAllByUserId(user.getId());
+        refreshTokenRepository.revokeAllByUserId(customUserDetails.getUserId());
 
-        // 4. Generate Access Token
-        String accessToken = jwtService.generateAccessToken(userDetails);
+        // 4. Generate Access Token (Pass the User entity)
+        String accessToken = jwtService.generateAccessToken(user);
         Long expiresIn = jwtService.getAccessTokenExpiry();
 
         // 5. Generate RAW Refresh Token (UUID)
         String rawRefreshToken = UUID.randomUUID().toString();
         String hashedRefreshToken = jwtService.hashToken(rawRefreshToken);
 
-        // 6. Build and save RefreshToken entity (with all new fields)
+        String finalDeviceName = getDeviceName(command, request);
+
+        // 6. Build and save RefreshToken entity
         RefreshToken refreshToken = RefreshToken.builder()
                 .tokenHash(hashedRefreshToken)
                 .userId(user.getId())
-                .deviceName(command.deviceName() != null ? command.deviceName() : "Unknown Device")
+                .deviceName(finalDeviceName)
                 .ipAddress(getClientIp(request))
                 .userAgent(request.getHeader("User-Agent"))
                 .lastUsed(Instant.now())
@@ -93,6 +96,7 @@ public class AuthServiceImpl implements AuthService {
         log.info("Login successful for email: {}", command.email());
         return new LoginResponseDto(accessToken, expiresIn, employee);
     }
+
 
     @Override
     @Transactional
@@ -118,14 +122,10 @@ public class AuthServiceImpl implements AuthService {
             throw new ValidationException("Refresh token expired");
         }
 
-        // 4. (Optional but recommended): Context Binding check
-        // If IP changed drastically, you could force re-login.
-        // For MVP, we just log it.
+        // 4. Context Binding check
         String currentIp = getClientIp(request);
         if (!storedToken.getIpAddress().equals(currentIp)) {
             log.warn("Refresh token used from different IP: {} vs {}", currentIp, storedToken.getIpAddress());
-            // For strict security, uncomment the line below:
-            // throw new ValidationException("IP address mismatch. Please login again.");
         }
 
         // 5. Get user
@@ -136,19 +136,24 @@ public class AuthServiceImpl implements AuthService {
         storedToken.setRevoked(true);
         refreshTokenRepository.save(storedToken);
 
-        // 7. Generate NEW Access Token
-        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
-        String newAccessToken = jwtService.generateAccessToken(userDetails);
+        // 7. Load the UserDetails and cast to CustomUserDetails to get the User entity
+        CustomUserDetails customUserDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(user.getEmail());
+        User freshUser = customUserDetails.getUser(); // ✅ Extract the User entity
+
+        // 8. Generate NEW Access Token (Pass the User entity)
+        String newAccessToken = jwtService.generateAccessToken(freshUser);
+        // ========== 🔥 FIX ENDS HERE ==========
+
         Long expiresIn = jwtService.getAccessTokenExpiry();
 
-        // 8. Generate NEW Refresh Token (Hash and save)
+        // 9. Generate NEW Refresh Token (Hash and save)
         String newRawRefreshToken = UUID.randomUUID().toString();
         String newHashedRefreshToken = jwtService.hashToken(newRawRefreshToken);
 
         RefreshToken newRefreshToken = RefreshToken.builder()
                 .tokenHash(newHashedRefreshToken)
                 .userId(user.getId())
-                .deviceName(storedToken.getDeviceName()) // Carry over device name
+                .deviceName(storedToken.getDeviceName())
                 .ipAddress(getClientIp(request))
                 .userAgent(request.getHeader("User-Agent"))
                 .lastUsed(Instant.now())
@@ -158,7 +163,7 @@ public class AuthServiceImpl implements AuthService {
 
         refreshTokenRepository.save(newRefreshToken);
 
-        // 9. Set NEW cookie
+        // 10. Set NEW cookie
         setRefreshTokenCookie(response, newRawRefreshToken);
 
         log.info("Refresh successful for user: {}", user.getEmail());
@@ -206,5 +211,34 @@ public class AuthServiceImpl implements AuthService {
         response.addHeader("Set-Cookie",
                 "refreshToken=; HttpOnly; Secure; SameSite=Strict; Path=/api/v1/auth; Max-Age=0"
         );
+    }
+
+    private String getDeviceName(LoginCommand command, HttpServletRequest request) {
+        // 1. If the client sent a custom device name, use it (they might have typed "My Work Laptop")
+        if (command.deviceName() != null && !command.deviceName().isBlank()) {
+            return command.deviceName();
+        }
+
+        // 2. Otherwise, derive a name from the User-Agent header
+        String userAgent = request.getHeader("User-Agent");
+        if (userAgent == null || userAgent.isBlank()) {
+            return "Unknown Device";
+        }
+
+        // Simple parsing: Check for common browsers
+        if (userAgent.contains("Chrome") && !userAgent.contains("Edg")) {
+            return "Chrome Browser";
+        } else if (userAgent.contains("Firefox")) {
+            return "Firefox Browser";
+        } else if (userAgent.contains("Safari") && !userAgent.contains("Chrome")) {
+            return "Safari Browser";
+        } else if (userAgent.contains("Edg")) {
+            return "Edge Browser";
+        } else if (userAgent.contains("Postman")) {
+            return "Postman API Client";
+        } else {
+            // Fallback: truncate the long User-Agent string to keep it readable
+            return userAgent.length() > 50 ? userAgent.substring(0, 50) + "..." : userAgent;
+        }
     }
 }

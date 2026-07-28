@@ -47,6 +47,6 @@ public class UserMapperImpl implements UserMapper {
 
     @Override
     public LoginCommand fromDto (LoginRequestDto dto) {
-        return new LoginCommand(dto.email(), dto.password());
+        return new LoginCommand(dto.email(), dto.password(), dto.deviceName());
     }
 }

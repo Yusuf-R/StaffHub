@@ -4,6 +4,8 @@ import com.naviroq.staffhub.identity.security.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -55,7 +57,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth.requestMatchers(
                                         "/api/v1/auth/**",          // Login, Refresh, Forgot Password
                                         "/api/v1/public/**",        // Optional: Public company info endpoints
-                                        "/api/v1/actuator/**",      // Health - Info checks (optional)
+                                        "/api/v1/actuators/**",      // Health - Info checks (optional)
                                         "/api/v3/api-docs/**",      // Swagger docs
                                         "/swagger-ui/**"            // Swagger UI (dev only)
                                 ).permitAll()
@@ -67,6 +69,11 @@ public class SecurityConfig {
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager(); // 👈 Spring creates the Login Validator for us
     }
 
 }

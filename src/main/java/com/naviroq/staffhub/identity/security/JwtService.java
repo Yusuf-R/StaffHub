@@ -38,8 +38,8 @@ public class JwtService {
     // =============================================
     public String generateAccessToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("email", user.getEmail());                 // 👈 Claim: email
-        claims.put("role", user.getRole().name());           // 👈 Claim: role
+        claims.put("email", user.getEmail());
+        claims.put("role", user.getRole().name());
 
         return Jwts.builder()
                 .claims(claims)

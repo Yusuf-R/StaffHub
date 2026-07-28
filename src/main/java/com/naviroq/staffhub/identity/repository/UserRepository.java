@@ -1,12 +1,21 @@
 package com.naviroq.staffhub.identity.repository;
 
 import com.naviroq.staffhub.identity.domain.entity.User;
-import io.micrometer.observation.ObservationFilter;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-public interface UserRepository extends JpaRepository <User, UUID> {
+public interface UserRepository extends JpaRepository<User, UUID> {
 
-    ObservationFilter findByEmail(String email);
+    Optional<User> findByEmail(String email);
+
+    @Query("SELECT u FROM User u JOIN FETCH u.employee")
+    List<User> findAllWithEmployee();
+
+    @Query("SELECT u FROM User u JOIN FETCH u.employee WHERE u.id = :id")
+    Optional<User> findByIdWithEmployee(@Param("id") UUID id);
 }

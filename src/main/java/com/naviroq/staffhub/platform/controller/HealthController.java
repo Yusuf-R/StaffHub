@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/staff-hub")
+@RequestMapping("/api/v1/actuators")
 public class HealthController {
 
     @GetMapping("/health")

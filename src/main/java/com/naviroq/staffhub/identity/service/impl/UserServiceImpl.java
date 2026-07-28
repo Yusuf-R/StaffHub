@@ -50,14 +50,14 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public User getUserById(UUID userId) {
-        return userRepository.findById(userId)
+        return userRepository.findByIdWithEmployee(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<User> listUsers() {
-        return userRepository.findAll();
+        return userRepository.findAllWithEmployee();
     }
 
     @Override
