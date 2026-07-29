@@ -9,6 +9,7 @@ import com.naviroq.staffhub.organization.domain.department.dto.UpdateDepartmentR
 import com.naviroq.staffhub.organization.domain.entity.Department;
 import com.naviroq.staffhub.organization.mapper.DepartmentMapper;
 import com.naviroq.staffhub.organization.service.DepartmentService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,7 @@ public class DepartmentController {
         this.departmentMapper = departmentMapper;
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @PostMapping
     public ResponseEntity<DepartmentResponseDto> createDepartment(
             @Valid @RequestBody CreateDepartmentRequest request
@@ -45,6 +47,7 @@ public class DepartmentController {
                 .body(departmentMapper.toDto(department));
     }
 
+    @PreAuthorize("hasRole('HR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<DepartmentResponseDto> getDepartment(
             @PathVariable UUID id
@@ -57,6 +60,7 @@ public class DepartmentController {
         );
     }
 
+    @PreAuthorize("hasRole('STAFF') or hasRole('HR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @GetMapping
     public ResponseEntity<List<DepartmentResponseDto>> listDepartments() {
 
@@ -68,6 +72,7 @@ public class DepartmentController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<DepartmentResponseDto> updateDepartment(
             @PathVariable UUID id,
@@ -84,6 +89,7 @@ public class DepartmentController {
         );
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDepartment(
             @PathVariable UUID id

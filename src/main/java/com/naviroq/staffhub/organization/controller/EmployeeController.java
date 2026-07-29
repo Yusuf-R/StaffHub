@@ -9,6 +9,7 @@ import com.naviroq.staffhub.organization.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,6 +56,7 @@ public class EmployeeController {
 
 
     // Read ALL + Filter Options
+    @PreAuthorize("hasRole('HR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @GetMapping
     public ResponseEntity<List<EmployeeResponseDto>> getAllEmployees(
             @RequestParam(required = false) String department,
@@ -93,6 +95,7 @@ public class EmployeeController {
     }
 
 
+    @PreAuthorize("hasRole('HR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<EmployeeResponseDto> updateEmployee(
             @PathVariable UUID id,
@@ -110,6 +113,7 @@ public class EmployeeController {
     }
 
     // 👇 DELETE endpoint with Request Parameter for the reason
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEmployee(
             @PathVariable("id") UUID employeeId,
@@ -120,6 +124,7 @@ public class EmployeeController {
     }
 
     // 👇 NEW: Restore endpoint
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @PatchMapping("/{id}/restore")  // Or @PutMapping
     public ResponseEntity<Void> restoreEmployee(@PathVariable("id") UUID employeeId) {
         employeeService.restoreEmployee(employeeId);

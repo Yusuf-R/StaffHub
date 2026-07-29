@@ -25,6 +25,31 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
+    /**
+     * Core filter logic — executed for every incoming request.
+     *
+     * <p><strong>Flow:</strong>
+     * <ol>
+     *   <li>Extract Authorization header</li>
+     *   <li>Parse and validate JWT token</li>
+     *   <li>Load user from database using UUID in token subject</li>
+     *   <li>Validate token against loaded user (prevents using token for deleted users)</li>
+     *   <li>Set authentication in SecurityContext so {@code @PreAuthorize} works downstream</li>
+     * </ol>
+     *
+     * <p><strong>Important:</strong> If no token is present or token is invalid, this filter
+     * does NOT block the request. It simply doesn't set authentication. The request proceeds
+     * and will be rejected later by Spring Security if the endpoint requires auth.
+     *
+     * <p><strong>Why UUID for subject:</strong> The JWT subject contains the user's UUID (not email
+     * or username) because UUID is immutable. If email changes, old tokens remain valid.
+     *
+     * @param request  the incoming HTTP request
+     * @param response the HTTP response
+     * @param filterChain the chain of filters to pass the request to next
+     * @throws ServletException if a servlet error occurs
+     * @throws IOException      if an I/O error occurs during filtering
+     */
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,

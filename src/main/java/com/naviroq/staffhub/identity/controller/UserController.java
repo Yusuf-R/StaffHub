@@ -9,6 +9,7 @@ import com.naviroq.staffhub.identity.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class UserController {
 
 
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @PostMapping
     public ResponseEntity<UserResponseDto> createUser(
             @Valid @RequestBody CreateUserRequestDto request
@@ -44,6 +46,7 @@ public class UserController {
                 .body(userMapper.toDto(user));
     }
 
+    @PreAuthorize("hasRole('HR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUser(
             @PathVariable UUID id
@@ -57,6 +60,7 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('HR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     public ResponseEntity<List<UserResponseDto>> listUsers() {
 
         List<UserResponseDto> response = userService.listUsers()
@@ -83,6 +87,7 @@ public class UserController {
         );
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(
             @PathVariable UUID id

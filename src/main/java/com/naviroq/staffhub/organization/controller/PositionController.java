@@ -9,6 +9,7 @@ import com.naviroq.staffhub.organization.service.PositionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class PositionController {
         this.positionMapper = positionMapper;
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @PostMapping
     public ResponseEntity<PositionResponseDto> createPosition(
             @Valid @RequestBody CreatePositionRequest request
@@ -42,6 +44,7 @@ public class PositionController {
                 .body(positionMapper.toDto(position));
     }
 
+    @PreAuthorize("hasRole('HR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<PositionResponseDto> getPosition(
             @PathVariable UUID id
@@ -54,6 +57,7 @@ public class PositionController {
         );
     }
 
+    @PreAuthorize("hasRole('HR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @GetMapping
     public ResponseEntity<List<PositionResponseDto>> listPositions() {
 
@@ -65,6 +69,7 @@ public class PositionController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<PositionResponseDto> updatePosition(
             @PathVariable UUID id,
@@ -81,6 +86,7 @@ public class PositionController {
         );
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePosition(
             @PathVariable UUID id
