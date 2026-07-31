@@ -1,0 +1,17 @@
+package com.naviroq.staffhub.workflow.domain.enums;
+
+public enum WorkflowType {
+    ONBOARD_EMPLOYEE,
+    UPDATE_EMPLOYEE_PROFILE,
+    REQUEST_LEAVE,
+    CREATE_DEPARTMENT,
+    UPDATE_DEPARTMENT,
+    CREATE_POSITION,
+    UPDATE_POSITION,
+    DELETE_EMPLOYEE,
+    TRANSFER_EMPLOYEE,
+    PROMOTE_EMPLOYEE,
+    ROLE_CHANGE,
+    CREATE_EVENT,
+    CREATE_ANNOUNCEMENT
+}

@@ -1,6 +1,9 @@
 package com.naviroq.staffhub.organization.service.impl;
 
 import ch.qos.logback.core.LayoutBase;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.naviroq.staffhub.common.enums.AuditAction;
+import com.naviroq.staffhub.common.enums.AuditEntityType;
 import com.naviroq.staffhub.common.enums.EmploymentStatus;
 import com.naviroq.staffhub.common.enums.EmploymentType;
 import com.naviroq.staffhub.common.exception.ValidationException;
@@ -193,7 +196,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(() -> new ValidationException("Employee not found: " + employeeId));
 
         // 2. 🎯 TAKE A SNAPSHOT before deletion
-        String snapshot = createEmployeeSnapshot(employee);
+        JsonNode snapshot = createEmployeeSnapshot(employee);
 
         // 3. Handle direct reports (set their manager to null)
         List<Employee> reports = employeeRepository.findByManagerId(employeeId);
@@ -217,12 +220,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         // 6. 📝 LOG THE DELETION
         auditLogService.saveAuditLog(
-                "DELETE",
-                "EMPLOYEE",
+                AuditAction.DELETE,
+                AuditEntityType.EMPLOYEE,
                 employeeId,
                 getCurrentUsername(),
-                snapshot,          // OLD value (full JSON)
-                null,              // NEW value (null for delete)
+                snapshot,
+                null,
                 reason,
                 getClientIP()
         );
@@ -252,12 +255,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.save(employee);
 
         auditLogService.saveAuditLog(
-                "RESTORE",
-                "EMPLOYEE",
+                AuditAction.RESTORE,
+                AuditEntityType.EMPLOYEE,
                 employeeId,
                 getCurrentUsername(),
                 null,
-                createEmployeeSnapshot(employee),  // New state
+                createEmployeeSnapshot(employee),
                 "Restored from deletion",
                 getClientIP()
         );
@@ -267,7 +270,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     // ---------- PRIVATE HELPERS ----------
 
-    private String createEmployeeSnapshot(Employee employee) {
+    private JsonNode createEmployeeSnapshot(Employee employee) {
         Map<String, Object> snapshot = new LinkedHashMap<>();
 
         // Basic info
@@ -315,12 +318,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         snapshot.put("createdAt", employee.getCreatedAt());
         snapshot.put("updatedAt", employee.getUpdatedAt());
 
-        try {
-            return objectMapper.writeValueAsString(snapshot);
-        } catch (JsonProcessingException e) {
-            log.error("Failed to create snapshot for employee: {}", employee.getId(), e);
-            return "{}";
-        }
+        return objectMapper.valueToTree(snapshot);
+
     }
 
     private String getCurrentUsername() {

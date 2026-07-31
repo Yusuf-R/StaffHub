@@ -59,6 +59,10 @@ public class Employee extends BaseEntity {
     @Column(nullable = false)
     private EmploymentStatus status;
 
+    @Column(name = "workflow_request_count", nullable = false)
+    @Builder.Default
+    private Long workflowRequestCount = 0L;
+
     // ---------- SOFT DELETE FIELDS ----------
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;       // null = active, not-null = deleted

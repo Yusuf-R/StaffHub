@@ -1,10 +1,13 @@
 package com.naviroq.staffhub.platform.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.naviroq.staffhub.common.entity.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.naviroq.staffhub.common.enums.AuditAction;
+import com.naviroq.staffhub.common.enums.AuditEntityType;
+import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.UUID;
 
@@ -18,10 +21,12 @@ import java.util.UUID;
 public class AuditLog extends BaseEntity {
 
     @Column(nullable = false, length = 20)
-    private String action;  // "DELETE", "RESTORE", "UPDATE", "CREATE"
+    @Enumerated(EnumType.STRING)
+    private AuditAction action;
 
     @Column(nullable = false, length = 50)
-    private String entityType;  // "EMPLOYEE", "USER", "DEPARTMENT"
+    @Enumerated(EnumType.STRING)
+    private AuditEntityType entityType;
 
     @Column(nullable = false)
     private UUID entityId;  // The ID of the record
@@ -29,11 +34,19 @@ public class AuditLog extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String performedBy;  // Username of the person who did it
 
-    @Column(columnDefinition = "TEXT")
-    private String oldValue;  // JSON snapshot BEFORE the action
+//    @Column(columnDefinition = "TEXT")
+//    private String oldValue;  // JSON snapshot BEFORE the action
 
-    @Column(columnDefinition = "TEXT")
-    private String newValue;  // JSON snapshot AFTER the action (null for DELETE)
+//    @Column(columnDefinition = "TEXT")
+//    private String newValue;  // JSON snapshot AFTER the action (null for DELETE)
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "old_value", columnDefinition = "jsonb")
+    private JsonNode oldValue;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "new_value", columnDefinition = "jsonb")
+    private JsonNode newValue;
 
     @Column(length = 500)
     private String reason;  // Why the action was performed
