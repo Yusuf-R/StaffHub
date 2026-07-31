@@ -16,6 +16,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
 
     // ---------- DERIVED QUERIES (Spring Data JPA auto-implements) ----------
     List<Employee> findByDepartment_Name(String departmentName);
+    List<Employee> findByDepartmentId(UUID departmentId);
     List<Employee> findByStatus(EmploymentStatus status);
     List<Employee> findByDepartment_NameAndStatus(String departmentName, EmploymentStatus status);
     boolean existsByEmployeeCode(String employeeCode);
