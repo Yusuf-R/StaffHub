@@ -24,7 +24,9 @@ public class WorkflowController {
     @PostMapping("/onboarding")
     @ResponseStatus(HttpStatus.CREATED)
     public WorkflowRequestResponseDto submitOnboarding(
-            @Valid @RequestBody CreateOnboardingWorkflowRequest request
+            @Valid
+            @RequestBody
+            CreateOnboardingWorkflowRequest request
     ) {
 
         CreateOnboardingWorkflowCommand command =

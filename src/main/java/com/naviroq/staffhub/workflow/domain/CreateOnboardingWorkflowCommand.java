@@ -43,6 +43,8 @@ public record CreateOnboardingWorkflowCommand(
         // User Information
         // ===============================
 
+        String username,
+
         String workEmail,
 
         RoleCode roleCode

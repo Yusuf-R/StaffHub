@@ -8,12 +8,14 @@ import com.naviroq.staffhub.organization.domain.entity.Employee;
 import com.naviroq.staffhub.organization.repository.EmployeeRepository;
 import com.naviroq.staffhub.platform.service.AuditLogService;
 import com.naviroq.staffhub.platform.service.NotificationService;
+import com.naviroq.staffhub.platform.snapshot.WorkflowSnapshotFactory;
 import com.naviroq.staffhub.workflow.domain.CreateOnboardingWorkflowCommand;
 import com.naviroq.staffhub.workflow.domain.dto.WorkflowRequestResponseDto;
 import com.naviroq.staffhub.workflow.domain.entity.WorkflowRequest;
 import com.naviroq.staffhub.workflow.domain.enums.ApprovalLevel;
 import com.naviroq.staffhub.workflow.domain.enums.WorkflowStatus;
 import com.naviroq.staffhub.workflow.domain.enums.WorkflowType;
+import com.naviroq.staffhub.workflow.mapper.WorkflowMapper;
 import com.naviroq.staffhub.workflow.repository.WorkflowRepository;
 import com.naviroq.staffhub.workflow.service.WorkflowService;
 import com.naviroq.staffhub.workflow.util.WorkflowRequestNumberGenerator;
@@ -35,7 +37,8 @@ public class WorkflowServiceImpl implements WorkflowService {
     private final AuditLogService auditLogService;
     private final NotificationService notificationService;
     private final ObjectMapper objectMapper;
-
+    private final WorkflowMapper workflowMapper;
+    private final WorkflowSnapshotFactory workflowSnapshotFactory;
 
     @Override
     @Transactional
@@ -76,7 +79,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 saved.getId(),
                 authenticationFacade.getCurrentUserEmail(),
                 null,
-                objectMapper.valueToTree(saved),
+                workflowSnapshotFactory.create(saved),
                 "HR submitted onboarding request.",
                 null
         );
@@ -96,14 +99,8 @@ public class WorkflowServiceImpl implements WorkflowService {
                 saved.getId(),
                 "WORKFLOW"
         );
-
-
-
-        return new WorkflowRequestResponseDto(
-                saved.getId(),
-                saved.getRequestNumber(),
-                saved.getType(),
-                saved.getStatus(),
+        return workflowMapper.toResponse(
+                saved,
                 "Onboarding request submitted successfully. Awaiting administrator approval."
         );
     }

@@ -60,6 +60,10 @@ public record CreateOnboardingWorkflowRequest(
         // User Account Information
         // ===============================
 
+        @NotBlank(message = "Username can not be blank")
+        @Length(min = 3, max = 100, message = "Username to long, 3-100 is the acceptable range")
+        String username,
+
         @NotBlank(message = "Work email is required")
         @Email(message = "Invalid work email")
         String workEmail,

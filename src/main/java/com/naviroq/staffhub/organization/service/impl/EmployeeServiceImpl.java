@@ -20,6 +20,7 @@ import com.naviroq.staffhub.organization.repository.PositionRepository;
 import com.naviroq.staffhub.organization.service.EmployeeService;
 import com.naviroq.staffhub.organization.service.util.EmployeeCodeGeneratorService;
 import com.naviroq.staffhub.platform.service.AuditLogService;
+import com.naviroq.staffhub.platform.snapshot.EmployeeSnapshotFactory;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -49,6 +50,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final UserRepository userRepository;
     private final AuditLogService auditLogService;  // 👈 NEW
     private final ObjectMapper objectMapper;
+    private final EmployeeSnapshotFactory employeeSnapshotFactory;
 
     // Used the AllArgsConstructor to generate the Constructor Automatically
 
@@ -224,7 +226,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 AuditEntityType.EMPLOYEE,
                 employeeId,
                 getCurrentUsername(),
-                snapshot,
+                employeeSnapshotFactory.create(employee),
                 null,
                 reason,
                 getClientIP()
